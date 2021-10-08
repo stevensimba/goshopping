@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>
+        Products
+    </title>
+    <meta charset="utf-8" />
+</head>
+<body>
+  
+  <form method="post" enctype="multipart/form-data" action="/product/process">
+  <label for="productid"> Product Name </label>
+  <br>
+   <input type="text" id="productid" name="productname" required>
+   <br> <br>
+   <label for="priceid"> Price </label>
+   <br>
+  <input type="number" id="priceid" name="price" min="0" step="0.001" required>
+  <br><br>
+  <label for="quantityid"> Quantity </label>
+  <br>
+    <input type="number" id="quantityid" name="quantity">
+    <br> <br> 
+    <label for="photoid"> Upload photo </label>
+    <input type="file" name="photo" id="photoid" required>
+    <br> <br> 
+    <input type="submit" value="Submit">
+  
+  </form>
+
+  
+</body>
+</html>

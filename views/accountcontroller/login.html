@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>
+        User registration
+    </title>
+    <meta charset="utf-8" />
+</head>
+<body>
+    <h1> User Login </h1>
+    {{ . }}
+<form method="POST" action="/account/loginAuth">
+    <label for="usernameId"> Username </label> <br>
+    <input type="text" id="usernameId" name="username" value="name" />
+    
+            <br>
+    <label for="passwordid"> Password </label> <br>
+    <input type="password" id="passwordid" name="password" />
+    <br>
+   
+    
+    <input type="submit" value="login" />
+    
+ </form>
+ <a href="/account"> Create Account </a>
+
+</body>
+</html>

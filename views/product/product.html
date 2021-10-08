@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>
+        Products
+    </title>
+    <meta charset="utf-8" />
+</head>
+<body>
+    <h1> Product {{ .Id }} </h1>
+    <table border="1">
+        <tr>
+            <th> Action </th>
+            <th> Name </th>
+            <th> Price </th>
+            <th> Quantity </th>
+            <th> Photo </th>
+            <th> Sub Total </th>
+        </tr>
+        <tr>
+            <th> Buy </th>
+            <td> {{.Name}} </td>
+            <td> {{.Price}} </td>
+            <td> {{.Quantity}} </td>
+            <td> <img src="/static/images/{{.Photo}}" width="120"> </td>
+            <td>
+                <a href="/cart/buy?id={{.Id}}">Buy</a>
+             </td>
+        </tr>
+    </table>      
+</body>
+</html>

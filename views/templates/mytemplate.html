@@ -1,0 +1,31 @@
+{{ define "layout" }}
+<!DOCTYPE html>
+<html lang="en">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
+<title> Thank You  </title>
+<link rel="stylesheet" type="text/css" href="/static/css/style.css" />
+</head>
+<body>
+    <div id="wrap">
+        <div class="header">
+            <h1> WELCOME TO THE PRODUCTS WEBSITE </h1>
+
+        </div>
+
+        <div class="content_center">
+        {{ template "content" . }}
+        </div>
+
+        <br> <br>
+        <div class="right_footer">
+            <a href="/index"> home </a>
+            <br>
+            <a href="/public/privacy.pdf"> privacy policy </a>
+        </div>
+    </div>
+
+
+</body>
+</html>
+
+{{ end }}

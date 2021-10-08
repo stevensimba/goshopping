@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>
+        User registration
+    </title>
+    <meta charset="utf-8" />
+</head>
+<body>
+    <h1> Registration info </h1>
+    {{ . }}
+<form method="POST" action="/account/registerAuth">
+    <label for="usernameId"> Username </label> <br>
+    <input type="text" id="usernameId" name="username" value="name" />
+    
+            <br>
+    <label for="passwordid"> Password </label> <br>
+    <input type="password" id="passwordid" name="password" />
+    <br>
+    <label for="ageid"> Age </label> <br>
+    <input type="number" id="ageid" min="13" max="100" name="age" /> <br>
+    
+    <div>
+    <input type="radio" id="male" name="gender" value="true" checked />
+    <label for="male"> Male </label> <br>
+    <input type="radio" id="female" name="gender" value="false" />
+    <label for="female"> Female </label>
+    </div>
+    <br> <br>
+    
+    <input type="submit" value="Register" />
+    
+ </form>
+
+</body>
+</html>
