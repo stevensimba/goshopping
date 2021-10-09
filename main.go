@@ -3,12 +3,15 @@ package main
 import (
 	"net/http"
 
+	"github.com/joho/godotenv"
 	"github.com/stevensimba/goshopping/controllers/accountcontroller"
 
 	"github.com/stevensimba/goshopping/controllers/cartcontroller"
 	"github.com/stevensimba/goshopping/controllers/productcontroller"
 	"github.com/stevensimba/goshopping/middlewares"
 )
+
+var _ = godotenv.Load()
 
 func main() {
 
@@ -28,8 +31,8 @@ func main() {
 	http.HandleFunc("/product/process", productcontroller.Process)
 
 	http.HandleFunc("/cart/", middlewares.Auth(cartcontroller.Index))
-	http.HandleFunc("/cart/index/", cartcontroller.Index)
-	http.HandleFunc("/cart/buy", cartcontroller.Buy)
+	//http.HandleFunc("/cart/index/", cartcontroller.Index)
+	http.HandleFunc("/cart/buy", middlewares.Auth(cartcontroller.Buy))
 	http.HandleFunc("/exit", cartcontroller.Exitcart)
 	http.HandleFunc("/Remove", cartcontroller.Remove)
 
@@ -39,7 +42,7 @@ func main() {
 	http.HandleFunc("/login/", accountcontroller.Login)
 	http.HandleFunc("/account/login/", accountcontroller.Login)
 	http.HandleFunc("/account/loginAuth", accountcontroller.LoginAuth)
-	http.HandleFunc("/account/logout", middlewares.Auth(accountcontroller.Logout))
+	http.HandleFunc("/account/logout", accountcontroller.Logout)
 
 	http.ListenAndServe(":3000", nil)
 

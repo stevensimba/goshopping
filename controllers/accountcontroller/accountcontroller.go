@@ -16,7 +16,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var store = sessions.NewCookieStore([]byte(os.Getenv("sessionkey")))
+var store = sessions.NewCookieStore([]byte(os.Getenv("secretkey")))
 
 // Serve a registration form
 func Register(w http.ResponseWriter, r *http.Request) {
@@ -52,7 +52,7 @@ func RegisterAuth(w http.ResponseWriter, r *http.Request) {
 	// validate username: ensure every character is alphanumeric
 	for _, char := range user.Username {
 		//unicode.IsLower, IsUpper, IsSymbol(char), IsSpace(int(char))
-		if unicode.IsLetter(char) == false && unicode.IsNumber(char) == false {
+		if !unicode.IsLetter(char) && !unicode.IsNumber(char) {
 			fmt.Printf("not letter/number %c", char)
 			alphaNumeric = false
 		}
@@ -163,11 +163,11 @@ func LoginAuth(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// To logout a user, se the session expiry in the past by a second
+// To logout a user, set the session expiry in the past by a second
 func Logout(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "mylogins")
 	session.Options.MaxAge = -1
 	session.Save(r, w)
 
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }

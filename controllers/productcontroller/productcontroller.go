@@ -13,15 +13,14 @@ import (
 	"github.com/stevensimba/goshopping/models"
 
 	"github.com/gorilla/sessions"
-	"github.com/joho/godotenv"
 )
 
-var enverr = godotenv.Load()
-var store = sessions.NewCookieStore([]byte(os.Getenv("sessionkey")))
+var store = sessions.NewCookieStore([]byte(os.Getenv("secretkey")))
 
 func Index(w http.ResponseWriter, r *http.Request) {
 	var username string
 	session, _ := store.Get(r, "mylogins")
+
 	if session.Values["username"] != nil {
 		username = session.Values["username"].(string)
 	}

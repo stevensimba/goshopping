@@ -8,13 +8,13 @@ import (
 	"github.com/gorilla/sessions"
 )
 
-var store = sessions.NewCookieStore([]byte(os.Getenv("sessionkey")))
+var store = sessions.NewCookieStore([]byte(os.Getenv("secretkey")))
 
-// Authenticate users
+// Ensure a user is loggedin before giving permission
 func Auth(HandlerFunc http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := store.Get(r, "mylogins")
 
+		session, _ := store.Get(r, "mylogins")
 		if _, ok := session.Values["username"]; !ok {
 			http.Redirect(w, r, "/account/login", 302)
 			return

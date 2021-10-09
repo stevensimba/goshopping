@@ -1,51 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>
         Products
     </title>
     <meta charset="utf-8" />
 </head>
-<body>
-{{/*  if; else if; else; lt : < ; ge : >=;  ne : != */}}
-        {{ if .username }}  
-            {{ if eq .username "stevo" }} 
-            <p> Hello Admin  </p>
-            {{ else }}
-            <p> {{ .username}} is loggedin </p> 
-            {{ end }}
-            
-            <a href="/account/logout"> [Logout] </a>
 
+<body>
+    {{/* if; else if; else; lt :
+    < ; ge :>=; ne : != */}} {{ if .username }} {{ if eq .username "stevo" }}
+        <p> Hello Admin </p>
         {{ else }}
-            <a href="/account/login"> [Login] </a>
-        {{end }}
+        <p> {{ .username}} is loggedin </p>
+        {{ end }}
+
+        <a href="/account/logout"> [Logout] </a> {{ else }}
+        <a href="/account/login"> [Login] </a> {{end }}
         <h1> Product List </h1>
 
-    
-    <table border="1">
-        <tr>
-            <th> Details </th>
-            <th> Name </th>
-            <th> Price </th>
-            <th> Quantity </th>
-            <th> Photo </th>
-            <th> Sub Total </th>
-        </tr>
-        {{ range .products }}
-        <tr>
-            <td>  <a href="/product?id={{ .Id }}"> See more </a> </td>
-            <td>  {{.Name}}    </td>
-            <td> {{.Price}} </td>
-            <td> {{.Quantity}} </td>
-            <td> <img src="/static/images/{{.Photo}}" width="120"> </td>
-            <td>
-                <a href="/cart/buy?id={{ .Id }}">Buy</a>
-             </td>
-        </tr>
-        {{ end }} 
-    </table>   
-    <br> <br>    
-    <a href="/product/add" style="background-color:yellow"> Add New Product </a>
+
+        <table border="1">
+            <tr>
+                <th> Details </th>
+                <th> Name </th>
+                <th> Price </th>
+                <th> Quantity </th>
+                <th> Photo </th>
+                <th> Action</th>
+            </tr>
+            {{ range .products }}
+            <tr>
+                <td> <a href="/product?id={{ .Id }}"> See more </a> </td>
+                <td> {{.Name}} </td>
+                <td> {{.Price}} </td>
+                <td> {{.Quantity}} </td>
+                <td> <img src="/static/images/{{.Photo}}" width="120"> </td>
+                <td>
+                    <a href="/cart/buy?id={{ .Id }}">Buy</a>
+                </td>
+            </tr>
+            {{ end }}
+        </table>
+        <br> <br>
+        <a href="/product/add" style="background-color:yellow"> Add New Product </a>
 </body>
+
 </html>

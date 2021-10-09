@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"text/template"
 
@@ -13,18 +14,17 @@ import (
 	"github.com/gorilla/sessions"
 )
 
-var store = sessions.NewCookieStore([]byte("mysession"))
+var store = sessions.NewCookieStore([]byte(os.Getenv("secretkey")))
 
-// serve the home page template
+// The cart page helps to display the cart object values
 func Index(w http.ResponseWriter, r *http.Request) {
-
 	session, _ := store.Get(r, "mysession")
 	strCart := session.Values["cart"].(string)
 
 	var cart []entities.Item
 	json.Unmarshal([]byte(strCart), &cart)
 
-	// total for each cart item
+	// sub-total for each cart item ( price * no. of items )
 	tmp, err := template.New("index.html").Funcs(template.FuncMap{
 		"total": func(item entities.Item) float64 {
 			return item.Product.Price * float64(item.Quantity)
@@ -43,7 +43,11 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	tmp.Execute(w, data)
 }
 
+// Buy creates a mysession cookie to save cart object data
+// After a purchase redirect to the cart page
 func Buy(w http.ResponseWriter, r *http.Request) {
+
+	// use the id value in the http request to fetch the product from the db
 	query := r.URL.Query()
 	id, _ := strconv.ParseInt(query.Get("id"), 10, 64)
 
@@ -69,6 +73,7 @@ func Buy(w http.ResponseWriter, r *http.Request) {
 		session, _ := store.Get(r, "mysession")
 		strCart := session.Values["cart"].(string)
 
+		// convert the json value into a struct
 		var cart []entities.Item
 		json.Unmarshal([]byte(strCart), &cart)
 		index := exists(id, cart)
