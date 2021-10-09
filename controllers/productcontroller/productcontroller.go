@@ -17,6 +17,7 @@ import (
 
 var store = sessions.NewCookieStore([]byte(os.Getenv("secretkey")))
 
+// the homepage handler uses FindAll() to fetch all product data & display
 func Index(w http.ResponseWriter, r *http.Request) {
 	var username string
 	session, _ := store.Get(r, "mylogins")
@@ -42,6 +43,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	tmp.Execute(w, data)
 }
 
+// The Product() function use id to fetch more details about a product
 func Product(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	id, _ := strconv.ParseInt(query.Get("id"), 10, 64)
@@ -60,11 +62,14 @@ func Product(w http.ResponseWriter, r *http.Request) {
 	tmp.Execute(w, product)
 }
 
+// A form used to submit new products
 func AddProduct(w http.ResponseWriter, r *http.Request) {
 	tmp, _ := template.ParseFiles("views/product/addproduct.html")
 	tmp.Execute(w, nil)
 }
 
+// The Process() function helps to save new products in the db;
+// It validates the file size and saves a new photo in the static folder
 func Process(w http.ResponseWriter, r *http.Request) {
 	var product entities.Product
 	product.Name = r.FormValue("productname")
@@ -87,7 +92,6 @@ func Process(w http.ResponseWriter, r *http.Request) {
 	defer dst.Close()
 
 	io.Copy(dst, file)
-	//fmt.Fprintf(w, "Upload Successful")
 	http.Redirect(w, r, "/index", http.StatusSeeOther)
 
 }

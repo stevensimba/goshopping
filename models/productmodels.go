@@ -12,6 +12,7 @@ import (
 type ProductModel struct {
 }
 
+// findall connects with the database to fetch all product data
 func (*ProductModel) Findall() ([]entities.Product, error) {
 	db, err := config.DbConn()
 	if err != nil {
@@ -23,6 +24,7 @@ func (*ProductModel) Findall() ([]entities.Product, error) {
 			return nil, err2
 		}
 
+		// create a list of products
 		var products []entities.Product
 		for rows.Next() {
 			var product entities.Product
@@ -34,6 +36,7 @@ func (*ProductModel) Findall() ([]entities.Product, error) {
 	}
 }
 
+// the Find() method fetches a single instance using the id
 func (*ProductModel) Find(id int64) (entities.Product, error) {
 	db, err := config.DbConn()
 	if err != nil {
@@ -52,6 +55,7 @@ func (*ProductModel) Find(id int64) (entities.Product, error) {
 	}
 }
 
+// InsertProduct() helps to save new products into the db;
 func InsertProduct(p entities.Product) {
 	db, _ := config.DbConn()
 	ctx, cancelfunc := context.WithTimeout(context.Background(), 5*time.Second)

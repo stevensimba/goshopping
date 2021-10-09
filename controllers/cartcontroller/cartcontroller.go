@@ -94,6 +94,7 @@ func Buy(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/cart", http.StatusSeeOther)
 }
 
+// expire to clear the cart
 func Exitcart(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "mysession")
 	session.Options.MaxAge = -1
@@ -101,6 +102,7 @@ func Exitcart(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
+// loop thru the cart to check if a particular product id exists
 func exists(id int64, cart []entities.Item) int {
 	for i := 0; i < len(cart); i++ {
 		if cart[i].Product.Id == id {
@@ -110,6 +112,7 @@ func exists(id int64, cart []entities.Item) int {
 	return -1
 }
 
+// total function aggregates all items sub-totals
 func total(cart []entities.Item) float64 {
 	var sum float64 = 0
 
@@ -120,6 +123,7 @@ func total(cart []entities.Item) float64 {
 	return sum
 }
 
+// Removing a product from the cart
 func Remove(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	id, _ := strconv.ParseInt(query.Get("id"), 10, 64)
@@ -130,6 +134,7 @@ func Remove(w http.ResponseWriter, r *http.Request) {
 	var cart []entities.Item
 	json.Unmarshal([]byte(strCart), &cart)
 
+	// go to the product index and slice it out (front & back)
 	index := exists(id, cart)
 	cart = append(cart[:index], cart[index+1:]...)
 
