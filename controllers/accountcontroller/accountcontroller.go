@@ -9,22 +9,22 @@ import (
 	"text/template"
 	"unicode"
 
+	"github.com/stevensimba/goshopping/config"
+	"github.com/stevensimba/goshopping/entities"
+
 	"github.com/gorilla/sessions"
-	"github.com/joho/godotenv"
-	"github.com/stevensimba/shopcart/config"
-	"github.com/stevensimba/shopcart/entities"
 	"golang.org/x/crypto/bcrypt"
 )
 
-var enverr = godotenv.Load()
-
 var store = sessions.NewCookieStore([]byte(os.Getenv("sessionkey")))
 
+// Serve a registration form
 func Register(w http.ResponseWriter, r *http.Request) {
 	tpl, _ := template.ParseGlob("views/accountcontroller/*.html")
 	tpl.ExecuteTemplate(w, "register.html", nil)
 }
 
+// Register a new user using the username, password, gender and age
 func RegisterAuth(w http.ResponseWriter, r *http.Request) {
 	var user entities.User
 	r.ParseForm()
@@ -32,21 +32,24 @@ func RegisterAuth(w http.ResponseWriter, r *http.Request) {
 	user.Password = r.FormValue("password")
 	user.Age, _ = strconv.Atoi(r.FormValue("age"))
 
+	// the default gender is female
 	if r.FormValue("gender") == "true" {
 		user.Male = true
 	} else {
 		user.Male = false
 	}
+
 	var (
 		alphaNumeric = true
 		pwdLength    = false
 	)
 
-	// validation
-	if 3 < len(user.Password) && len(user.Password) < 10 {
+	// validate the password is between 3 and 25 characters
+	if 3 < len(user.Password) && len(user.Password) < 25 {
 		pwdLength = true
 	}
 
+	// validate username: ensure every character is alphanumeric
 	for _, char := range user.Username {
 		//unicode.IsLower, IsUpper, IsSymbol(char), IsSpace(int(char))
 		if unicode.IsLetter(char) == false && unicode.IsNumber(char) == false {
@@ -62,24 +65,26 @@ func RegisterAuth(w http.ResponseWriter, r *http.Request) {
 	var insertStmt *sql.Stmt
 	var result sql.Result
 
+	// validate password and the username
 	if !pwdLength || !alphaNumeric {
 		tpl.ExecuteTemplate(w, "register.html", "Password: 3-5, username is letters & numbers")
 		return
-
 	} else {
-
 		data := map[string]interface{}{
 			"user": user,
 		}
+
+		// save data in the database, only if the username is new
 		rows := db.QueryRow("select id from users where username = ? ", user.Username)
 		err := rows.Scan(&Uid)
 
 		if err != sql.ErrNoRows {
-
 			tpl.ExecuteTemplate(w, "register.html", "username already exists")
 		} else {
+			// encrypt password
 			hash, _ = bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 
+			// insert the registration data in the user table
 			insertStmt, _ = db.Prepare("insert into users (username, password, age, male) values(?, ?, ?, ?);")
 			defer insertStmt.Close()
 
@@ -101,6 +106,8 @@ func RegisterAuth(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+
+// serve the login form
 func Login(w http.ResponseWriter, r *http.Request) {
 	tpl, _ := template.ParseGlob("views/accountcontroller/*.html")
 
@@ -108,6 +115,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+// Authenticate the user login information
 var login entities.Login
 
 func LoginAuth(w http.ResponseWriter, r *http.Request) {
@@ -117,6 +125,7 @@ func LoginAuth(w http.ResponseWriter, r *http.Request) {
 	login.Username = r.FormValue("username")
 	login.Password = r.FormValue("password")
 
+	// if the user is already loggedin, redirect to the homepage
 	session, _ := store.Get(r, "mylogins")
 	if session.Values["username"] == login.Username {
 		http.Redirect(w, r, "/index", http.StatusSeeOther)
@@ -125,26 +134,25 @@ func LoginAuth(w http.ResponseWriter, r *http.Request) {
 	db, _ := config.DbConn()
 	var Pwd string
 
+	// match the username with password
 	rows := db.QueryRow("select password from users where username = ? ", login.Username)
 
+	// if the username does not exist send a mismatch error
 	err := rows.Scan(&Pwd)
 	if err == sql.ErrNoRows {
 		tpl.ExecuteTemplate(w, "login.html", "username and password mismatch")
 	} else {
-
+		// if username exists but password does not match
+		// send a check username / password error
 		err = bcrypt.CompareHashAndPassword([]byte(Pwd), []byte(login.Password))
 		if err != nil {
 			tpl.ExecuteTemplate(w, "login.html", "check username and password")
 		} else {
-
-			// if mylogins did not exists it will be created
-			// _, ok := session.Values["username"]
-			// if !ok { http.Redirect(w, r, "account/login", 302)}
-
+			// create a new session with the username logged in
 			session, _ := store.Get(r, "mylogins")
 			session.Values["username"] = login.Username
 			session.Save(r, w)
-
+			// fecth the base and the include html file and send a success message
 			tmp, _ := template.ParseFiles(
 				"views/templates/mytemplate.html",
 				"views/accountcontroller/loggedin.html",
@@ -155,6 +163,7 @@ func LoginAuth(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// To logout a user, se the session expiry in the past by a second
 func Logout(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "mylogins")
 	session.Options.MaxAge = -1
@@ -162,4 +171,3 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
-

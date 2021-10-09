@@ -6,12 +6,11 @@ import (
 	"strings"
 
 	"github.com/gorilla/sessions"
-	"github.com/joho/godotenv"
 )
 
-var enverr = godotenv.Load()
 var store = sessions.NewCookieStore([]byte(os.Getenv("sessionkey")))
 
+// Authenticate users
 func Auth(HandlerFunc http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		session, _ := store.Get(r, "mylogins")
@@ -25,6 +24,7 @@ func Auth(HandlerFunc http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
+// Hide static files (prevent direct navigation)
 func Hidefiles(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// check if request endswith "/"

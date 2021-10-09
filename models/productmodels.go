@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/stevensimba/shopcart/config"
-	"github.com/stevensimba/shopcart/entities"
+	"github.com/stevensimba/goshopping/config"
+	"github.com/stevensimba/goshopping/entities"
 )
 
 type ProductModel struct {

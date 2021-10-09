@@ -7,13 +7,15 @@ import (
 	"strconv"
 	"text/template"
 
+	"github.com/stevensimba/goshopping/entities"
+	"github.com/stevensimba/goshopping/models"
+
 	"github.com/gorilla/sessions"
-	"github.com/stevensimba/shopcart/entities"
-	"github.com/stevensimba/shopcart/models"
 )
 
 var store = sessions.NewCookieStore([]byte("mysession"))
 
+// serve the home page template
 func Index(w http.ResponseWriter, r *http.Request) {
 
 	session, _ := store.Get(r, "mysession")
@@ -28,6 +30,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 			return item.Product.Price * float64(item.Quantity)
 		},
 	}).ParseFiles("views/cart/index.html")
+
 	if err != nil {
 		fmt.Println(err)
 	}

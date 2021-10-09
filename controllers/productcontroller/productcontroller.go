@@ -9,10 +9,11 @@ import (
 	"strconv"
 	"text/template"
 
+	"github.com/stevensimba/goshopping/entities"
+	"github.com/stevensimba/goshopping/models"
+
 	"github.com/gorilla/sessions"
 	"github.com/joho/godotenv"
-	"github.com/stevensimba/shopcart/entities"
-	"github.com/stevensimba/shopcart/models"
 )
 
 var enverr = godotenv.Load()
